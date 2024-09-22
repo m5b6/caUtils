@@ -1,3 +1,4 @@
 */target
 */results.json
 */.cargo/config.toml
+*.json
