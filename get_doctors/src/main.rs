@@ -7,13 +7,15 @@ mod utils;
 
 use colored::*;
 use sqlx::SqlitePool;
+use std::env;
 use std::error::Error;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     logger::init().unwrap();
 
-    let database_url = "sqlite:clinicaalemana.db";
+    let database_url = env::var("DATABASE_URL").unwrap();
+
     let pool = SqlitePool::connect(&database_url).await?;
 
     database::initialize_database(&pool).await?;

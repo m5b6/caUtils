@@ -42,10 +42,11 @@ pub async fn initialize_database(pool: &SqlitePool) -> Result<(), Box<dyn Error>
         -- Similarly, create other tables for areas_interes, que_trata, docencia, sub_especialidades, idiomas
         "#
         )
-        .execute(pool)    
+    .execute(pool)    
     .await?;
     Ok(())
 }
+
 
 pub async fn save_results_to_database(
     pool: &SqlitePool,
