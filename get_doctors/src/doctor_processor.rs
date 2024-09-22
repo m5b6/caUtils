@@ -23,6 +23,7 @@ pub async fn process_doctors(client: &Client, doctors: Vec<DoctorOverview>) -> V
                         Some(profile)
                     }
                     Err(e) => {
+                        log::error!("The failing doctor is {:?}", doctor);
                         log::error!("Error fetching profile for RUT {}: {}", rut, e);
                         pb.inc(1);
                         None

@@ -5,48 +5,84 @@ use std::error::Error;
 
 pub async fn initialize_database(pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
     sqlx::query(
-    r#"
-    CREATE TABLE IF NOT EXISTS doctors (
-        ppn INTEGER PRIMARY KEY,
-        email TEXT,
-        gender TEXT,
-        fullName TEXT,
-                name TEXT,
-                lastName TEXT,
-                image TEXT,
-                tieneTelemedicina BOOLEAN,
-                atencionClinica BOOLEAN
+        r#"
+        CREATE TABLE IF NOT EXISTS doctors (
+            ppn INTEGER PRIMARY KEY,
+            email TEXT,
+            gender TEXT,
+            fullName TEXT,
+            name TEXT,
+            lastName TEXT,
+            image TEXT,
+            tieneTelemedicina BOOLEAN,
+            atencionClinica BOOLEAN
         );
+        
         CREATE TABLE IF NOT EXISTS areas_medicas (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                doctor_ppn INTEGER,
-                area_medica TEXT,
-                FOREIGN KEY(doctor_ppn) REFERENCES doctors(ppn)
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            doctor_ppn INTEGER,
+            area_medica TEXT,
+            FOREIGN KEY(doctor_ppn) REFERENCES doctors(ppn)
         );
+        
         CREATE TABLE IF NOT EXISTS educacion (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                doctor_ppn INTEGER,
-                annoIngreso INTEGER,
-                annoEgreso INTEGER,
-                nombre TEXT,
-                institucion TEXT,
-                FOREIGN KEY(doctor_ppn) REFERENCES doctors(ppn)
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            doctor_ppn INTEGER,
+            annoIngreso INTEGER,
+            annoEgreso INTEGER,
+            nombre TEXT,
+            institucion TEXT,
+            FOREIGN KEY(doctor_ppn) REFERENCES doctors(ppn)
         );
+        
         CREATE TABLE IF NOT EXISTS especialidades (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                doctor_ppn INTEGER,
-                especialidadId INTEGER,
-                nombres TEXT,
-                FOREIGN KEY(doctor_ppn) REFERENCES doctors(ppn)
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            doctor_ppn INTEGER,
+            especialidadId INTEGER,
+            nombres TEXT,
+            FOREIGN KEY(doctor_ppn) REFERENCES doctors(ppn)
         );
-        -- Similarly, create other tables for areas_interes, que_trata, docencia, sub_especialidades, idiomas
-        "#
-        )
-    .execute(pool)    
+        
+        CREATE TABLE IF NOT EXISTS idiomas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            doctor_ppn INTEGER,
+            idioma TEXT,
+            FOREIGN KEY(doctor_ppn) REFERENCES doctors(ppn)
+        );
+        
+        CREATE TABLE IF NOT EXISTS areas_interes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            doctor_ppn INTEGER,
+            area_interes TEXT,
+            FOREIGN KEY(doctor_ppn) REFERENCES doctors(ppn)
+        );
+        
+        CREATE TABLE IF NOT EXISTS que_trata (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            doctor_ppn INTEGER,
+            trata TEXT,
+            FOREIGN KEY(doctor_ppn) REFERENCES doctors(ppn)
+        );
+        
+        CREATE TABLE IF NOT EXISTS docencia (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            doctor_ppn INTEGER,
+            docencia TEXT,
+            FOREIGN KEY(doctor_ppn) REFERENCES doctors(ppn)
+        );
+        
+        CREATE TABLE IF NOT EXISTS sub_especialidades (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            doctor_ppn INTEGER,
+            sub_especialidad TEXT,
+            FOREIGN KEY(doctor_ppn) REFERENCES doctors(ppn)
+        );
+        "#,
+    )
+    .execute(pool)
     .await?;
     Ok(())
 }
-
 
 pub async fn save_results_to_database(
     pool: &SqlitePool,
@@ -84,7 +120,6 @@ pub async fn save_results_to_database(
         .execute(&mut *tx)
         .await?;
 
-        // Insert into areas_medicas table
         for area in &profile.areasMedicas {
             sqlx::query(
                 r#"
@@ -92,7 +127,7 @@ pub async fn save_results_to_database(
                 "#,
             )
             .bind(profile.ppn.map(|ppn| ppn as i64))
-            .bind(area)
+            .bind(&area)
             .execute(&mut *tx)
             .await?;
         }
@@ -177,7 +212,7 @@ pub async fn save_results_to_database(
         for sub in &profile.subEspecialidades {
             sqlx::query(
                 r#"
-                INSERT INTO sub_especialidades (doctor_ppn, sub_especialidades) VALUES (?, ?);
+                INSERT INTO sub_especialidades (doctor_ppn, sub_especialidad) VALUES (?, ?);
                 "#,
             )
             .bind(profile.ppn.map(|ppn| ppn as i64))
