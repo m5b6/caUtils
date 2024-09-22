@@ -24,3 +24,16 @@ pub fn format_rut_with_verification_digit(rut: u64) -> String {
     let verification_digit = calculate_verification_digit(rut);
     format!("{}-{}", rut, verification_digit)
 }
+
+pub fn print_statistics(initial_count: usize, final_count: usize) {
+    log::info!("Initial number of doctors: {}", initial_count);
+    log::info!("Final number of doctor profiles: {}", final_count);
+    let loss = initial_count - final_count;
+    log::info!("Data loss: {} doctors", loss);
+    if loss > 0 {
+        log::info!(
+            "Percentage of data loss: {:.2}%",
+            (loss as f64 / initial_count as f64) * 100.0
+        );
+    }
+}

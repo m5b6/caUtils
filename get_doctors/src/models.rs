@@ -2,11 +2,11 @@ use serde::{Deserialize, Serialize};
 
 #[allow(non_snake_case)]
 #[derive(Debug, Deserialize, Serialize)]
-pub struct Doctor {
+pub struct DoctorOverview {
     pub id: u64,
     pub nombres: String,
-    pub apellidoMaterno: String,
-    pub apellidoPaterno: String,
+    pub apellidoMaterno: Option<String>, /* Only 1 case... */
+    pub apellidoPaterno: Option<String>,
     pub rut: u64,
     #[serde(default)]
     pub codigoAreaMedica: String,
@@ -59,12 +59,11 @@ pub struct DoctorProfile {
     pub atencionClinica: bool,
 }
 
-// ... (keep the rest of the file unchanged)
 #[allow(non_snake_case)]
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Education {
-    pub annoIngreso: u32,
-    pub annoEgreso: u32,
+    pub annoIngreso: Option<u32>,
+    pub annoEgreso: Option<u32>,
     pub nombre: String,
     pub institucion: String,
 }
@@ -72,12 +71,12 @@ pub struct Education {
 #[allow(non_snake_case)]
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Specialty {
-    pub especialidadId: u32,
+    pub especialidadId: Option<u32>,
     pub nombres: String,
 }
 
 #[derive(Serialize)]
 pub struct ResultEntry {
-    pub id: u32,
+    pub id: Option<u32>,
     pub doctors: Vec<DoctorProfile>,
 }
