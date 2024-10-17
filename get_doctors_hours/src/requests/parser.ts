@@ -13,6 +13,11 @@ export default function parseDoctorsHours(html: string) {
       );
     }
     const parsedJsonData = JSON.parse(rawJsonData);
-    return parsedJsonData.primera_hora;
+    const firstHour = parsedJsonData.primera_hora;
+    if (!firstHour) {
+      throw new Error("First hour not found in JSON data");
+    }
+
+    return firstHour;
   }
 }
