@@ -1,4 +1,5 @@
 */target
 */results.json
 */.cargo/config.toml
-*.json
+DS_Store
+resultado_parametros_*.json
